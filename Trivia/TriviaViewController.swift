@@ -21,13 +21,50 @@ class TriviaViewController: UIViewController {
   private var questions = [TriviaQuestion]()
   private var currQuestionIndex = 0
   private var numCorrectQuestions = 0
+
   
   override func viewDidLoad() {
     super.viewDidLoad()
     addGradient()
+      
+      let firstQuest = TriviaQuestion(category: "Testing", question:"Testing", correctAnswer: "Testing", incorrectAnswers: ["Testing1", "Testing2", "Testing3"])
+      let secondQuest = TriviaQuestion(category: "Testing", question:"Testing", correctAnswer: "Testing", incorrectAnswers: ["Testing1", "Testing2", "Testing3"])
+      questions = [firstQuest, secondQuest]
+      
     questionContainerView.layer.cornerRadius = 8.0
+    fetchTriviaQuestions()
     // TODO: FETCH TRIVIA QUESTIONS HERE
   }
+    
+    private func fetchTriviaQuestions() {
+        questions.removeAll()
+        currQuestionIndex = 0
+        numCorrectQuestions = 0
+        
+        TriviaQuestionService.fetchQuestions { [weak self] fetchedQuestions in
+                 // Ensure self exists and we're on the main thread for UI updates
+                 guard let self = self else { return }
+
+                 // Check if questions were successfully fetched
+                 if let fetchedQuestions = fetchedQuestions, !fetchedQuestions.isEmpty {
+                     self.questions = fetchedQuestions
+                     // Update the UI with the first question
+                     self.updateQuestion(withQuestionIndex: self.currQuestionIndex)
+                 } else {
+                     // Handle case where no questions were fetched
+                     print("Failed to load questions or no questions available.")
+                     self.questionLabel.text = "Failed to load questions. Restart to try again."
+                     self.categoryLabel.text = ""
+                 }
+             }
+    }
+//    TriviaQuestionService.fetchQuestions { [weak self] fetchQuestions in
+//        guard let self = self else { return }
+//        
+//        DispatchQueue.main.async {
+//            if let
+//        }
+//    }
   
   private func updateQuestion(withQuestionIndex questionIndex: Int) {
     currentQuestionNumberLabel.text = "Question: \(questionIndex + 1)/\(questions.count)"

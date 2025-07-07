@@ -58,13 +58,7 @@ class TriviaViewController: UIViewController {
                  }
              }
     }
-//    TriviaQuestionService.fetchQuestions { [weak self] fetchQuestions in
-//        guard let self = self else { return }
-//        
-//        DispatchQueue.main.async {
-//            if let
-//        }
-//    }
+
   
   private func updateQuestion(withQuestionIndex questionIndex: Int) {
     currentQuestionNumberLabel.text = "Question: \(questionIndex + 1)/\(questions.count)"
@@ -113,6 +107,7 @@ class TriviaViewController: UIViewController {
       currQuestionIndex = 0
       numCorrectQuestions = 0
       updateQuestion(withQuestionIndex: currQuestionIndex)
+        self.fetchTriviaQuestions()     // try to refetch new questins again
     }
     alertController.addAction(resetAction)
     present(alertController, animated: true, completion: nil)
@@ -127,6 +122,7 @@ class TriviaViewController: UIViewController {
     gradientLayer.endPoint = CGPoint(x: 0.5, y: 1)
     view.layer.insertSublayer(gradientLayer, at: 0)
   }
+    
   
   @IBAction func didTapAnswerButton0(_ sender: UIButton) {
     updateToNextQuestion(answer: sender.titleLabel?.text ?? "")

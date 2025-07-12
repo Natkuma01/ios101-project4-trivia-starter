@@ -83,16 +83,34 @@ class TriviaViewController: UIViewController {
     }
   }
   
+   // Helper function for FEATURE5
+    private func proceedToNextQuestionOrEnd() {
+        if currQuestionIndex < questions.count {
+            updateQuestion(withQuestionIndex: currQuestionIndex)
+        } else {
+            showFinalScore()
+        }
+    }
+    
   private func updateToNextQuestion(answer: String) {
-    if isCorrectAnswer(answer) {
+      // FEATURE5: Provide user feedback on incorrect questions
+    let correct = isCorrectAnswer(answer)
+    if correct {
       numCorrectQuestions += 1
+        currQuestionIndex += 1
+        proceedToNextQuestionOrEnd()
+    } else {
+        let correctAnswer = questions[currQuestionIndex].correctAnswer
+        let alert = UIAlertController(title: "Incorrect!", message: "The correct answer was \(correctAnswer)", preferredStyle: .alert)
+        
+        let okAction = UIAlertAction(title: "Next", style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            self.currQuestionIndex += 1
+            self.proceedToNextQuestionOrEnd()
+        }
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
     }
-    currQuestionIndex += 1
-    guard currQuestionIndex < questions.count else {
-      showFinalScore()
-      return
-    }
-    updateQuestion(withQuestionIndex: currQuestionIndex)
   }
   
   private func isCorrectAnswer(_ answer: String) -> Bool {
